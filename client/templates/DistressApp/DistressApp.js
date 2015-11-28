@@ -2,6 +2,9 @@ Template.DistressApp.helpers({
   'distressCallSent'() {
     return Session.get("distressCallSent") === true;
   },
+  'accountCreated'() {
+    return Session.get('force-login') || Accounts.isPhoneVerified();
+  }
 });
 
 Tracker.autorun(function (computation) {
@@ -13,8 +16,4 @@ Tracker.autorun(function (computation) {
     //stop the tracker if we got something
     computation.stop();
   }
-});
-
-Template.DistressApp.onRendered(() => {
-  console.log("hello there!");
 });

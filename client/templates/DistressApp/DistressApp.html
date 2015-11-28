@@ -2,13 +2,17 @@
   <div class="container">
     <div class="col-xs-12 text-center">
       <h1>Distress Call</h1>
-      <h4>by Rapid Response</h4>
+      <h4>by Rapid Response team</h4>
     </div>
 
-    {{#unless distressCallSent}}
-      {{> BigDistressUI}}
+    {{#if accountCreated}}
+      {{#unless distressCallSent}}
+        {{> BigDistressUI}}
+      {{else}}
+        {{> DistressResponseMessage}}
+      {{/unless}}
     {{else}}
-      {{> DistressResponseMessage}}
-    {{/unless}}
+      {{> MobileSignupUI}}
+    {{/if}}
   </div>
 </template>
