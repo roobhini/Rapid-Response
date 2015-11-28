@@ -10,24 +10,16 @@ Template.MobileSignupUI.events({
       return false;
     }
 
-    Accounts.createUserWithPhone({
-      phone: indianPhone,
-      password: indianPhone,
-      profile: {
-        name: fullName,
-        verified: false
-      }
-    }, function () {
-      Session.set('phone-verification-sent', true);
-      Session.set('phone-supplied', indianPhone);
-    });
+    Session.set('phoneVerificationSent', true);
+    Session.set('mobileNumber', indianPhone);
+    Session.set('fullName', fullName);
   },
   'click #mobileVerifyBtn'(ev) {
     ev.preventDefault();
-    Session.set('force-login')
+    Session.set('forceLogin', true);
   }
 });
 
 Template.MobileSignupUI.helpers({
-  'phoneVerificationSent': () => {return Session.get('phone-verification-sent')}
+  'phoneVerificationSent': () => {return Session.get('phoneVerificationSent')}
 });

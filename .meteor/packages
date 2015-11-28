@@ -23,5 +23,4 @@ reactive-var
 kadira:flow-router
 kadira:blaze-layout
 dburles:google-maps
-okland:accounts-phone
 ecwyne:nexmo-sms

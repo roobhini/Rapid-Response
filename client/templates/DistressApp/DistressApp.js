@@ -2,8 +2,8 @@ Template.DistressApp.helpers({
   'distressCallSent'() {
     return Session.get("distressCallSent") === true;
   },
-  'accountCreated'() {
-    return Session.get('force-login') || Accounts.isPhoneVerified();
+  'forceLoginActive'() {
+    return Session.get('forceLogin') === true;
   }
 });
 
