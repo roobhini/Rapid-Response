@@ -12,49 +12,63 @@ if(Meteor.isServer){
 
 
 
-     var stream = T.stream('statuses/filter', {track:'#testingrapidresp'});
+     var stream = T.stream('statuses/filter', {track:'#rapidresponse'});
 
+        //streaming live tweets
      	stream.on('tweet', Meteor.bindEnvironment(function (tweet,err) {
 		  if(err){
 		  	console.log(err);
 		  }else{
+
+		   //Get id,text,name
 		   var id=tweet.id;
 		   var text=tweet.text;
 		   var name=tweet.user.name;
-           console.log(tweet);
+           var latitude="";
+           var longitude="";
+           //Getting geo coordinates
            if(tweet.geo!=null){    
-		   var coordinates=tweet.geo.coordinates;
-		   console.log("coordinates:"+coordinates);
-		}
+		         var coordinates=tweet.geo.coordinates;
+		         //var List=coordinates.split(',');
+		         
+		         console.log("coordinates:"+coordinates);
+		   }
+
 		  console.log('id:'+id+'text:'+text+'name:'+name); 
 
-		       var match=text.match(/[0-9]{10}/);	
+           //Pattern match for mobile number
+		   var match=text.match(/[0-9]{10}/);
+		   
+		   if(match!=null){
+		   	        var number=match[0];
+		            console.log(number);
                 
-                if(match!=null){
-                	console.log("Number:"+match[0]);
+
                     var index=match.index+10;
+                    //Getting index for address
                     var address=text.slice(index);
-                     if(address!="")
+                    if(address!="")
                       	  console.log("address:"+address);
-                }
+                 }
                 else{
-                	var address=text.slice(18);
+                	var address=text.slice(14);
                 	if(address!=""){
                 		console.log("address:"+address);
-                		var url='https://maps.googleapis.com/maps/api/geocode/json';
-
-                		Meteor.http.get(url,{q:address,API:'AIzaSyBFyokSNGlp1mIacwBJsD4ae4660niAzRI'},
-                			function(err,data,response){
-                				//console.log(err);
-                				console.log(data);
-                				//console.log(response);
-                			}
-
-                			);
-                		
-                		
 		              }
                 }
+                //Getting geo location from tweeted place
+                if(address!=""){
+                   var geo = new GeoCoder();
+                   var result = geo.geocode(address);
+                  latitude=result[0].latitude;
+                  longitude=result[0].longitude;
+                         console.log(latitude);
+                   }
+                   
+
+       Twitterlocation.insert({name:name,number:number,latitudes:latitude,Longitudes:longitude,doneflag:"false"});
+       Twitterlocation.insert({name:name,number:number,latitudes:latitude,Longitudes:longitude,doneflag:"false"});
+
                       
 		  }
 		}))
