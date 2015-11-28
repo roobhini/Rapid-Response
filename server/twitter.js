@@ -1,7 +1,7 @@
 
 
 if(Meteor.isServer){
-	Meteor.startup(function(){
+	//Meteor.startup(function(){
 
 		 var T = new Twit({
                consumer_key:         'e6wcugIgcqWfzAY5HtHXwlHXK', // API key
@@ -11,28 +11,53 @@ if(Meteor.isServer){
         });
 
 
-		    T.get('search/tweets',
-        {
-            q: '#testingrapidresponse',
-            count: 100
-        },
-        function(err, data, response) {
-            if(!err){
-              var statuses=data.statuses;
-              statuses.forEach(function(obj){
-                    if(obj.geo!==null){
-                       console.log(obj.geo.coordinates);
-                      }
-              });
-            }
-        }
-    );
-     
-		 var stream=T.stream('statuses/filter',{track:'#testingrapidresponse'})
-		 stream.on('tweet',function(tweet){
-		 	console.log('hello');
-		 	console.log(tweet);
-		 });
 
-	});
+     var stream = T.stream('statuses/filter',{track:'#testingrapidresp'})
+
+		stream.on('tweet', function (tweet,err) {
+		  if(err){
+		  	console.log(err);
+		  }else{
+		   var id=tweet.id;
+		   var text=tweet.text;
+		   var name=tweet.user.name;
+           console.log(tweet);
+           if(tweet.geo!=null){    
+		   var coordinates=tweet.geo.coordinates;
+		   console.log("coordinates:"+coordinates);
+		}
+		  console.log('id:'+id+'text:'+text+'name:'+name); 
+
+		       var match=text.match(/[0-9]{10}/);	
+                
+                if(match!=null){
+                	console.log("Number:"+match[0]);
+                    var index=match.index+10;
+                    var address=text.slice(index);
+                     if(address!="")
+                      	  console.log("address:"+address);
+                }
+                else{
+                	var address=text.slice(18);
+                	if(address!=""){
+                		console.log("address:"+address);
+                		var url='https://maps.googleapis.com/maps/api/geocode/json';
+
+                		Meteor.http.get(url,{q:address,API:'AIzaSyBFyokSNGlp1mIacwBJsD4ae4660niAzRI'},
+                			function(err,data,response){
+                				//console.log(err);
+                				console.log(data);
+                				//console.log(response);
+                			}
+
+                			);
+                		
+                		
+		              }
+                }
+                      
+		  }
+		})
+
+	//	});
 }
