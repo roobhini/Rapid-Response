@@ -1,6 +1,6 @@
-livelocation = new Meteor.Collection("LiveLocation");
+Livelocation = new Meteor.Collection("LiveLocation");
 
-livelocation.allow({
+Livelocation.allow({
   "insert": () => true,
   "remove": () => true,
   "update": () => true
