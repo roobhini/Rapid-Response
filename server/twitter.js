@@ -12,9 +12,9 @@ if(Meteor.isServer){
 
 
 
-     var stream = T.stream('statuses/filter',{track:'#testingrapidresp'})
+     var stream = T.stream('statuses/filter', {track:'#testingrapidresp'});
 
-		stream.on('tweet', function (tweet,err) {
+     	stream.on('tweet', Meteor.bindEnvironment(function (tweet,err) {
 		  if(err){
 		  	console.log(err);
 		  }else{
@@ -57,7 +57,7 @@ if(Meteor.isServer){
                 }
                       
 		  }
-		})
+		}))
 
 	//	});
 }
