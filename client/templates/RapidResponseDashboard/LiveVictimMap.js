@@ -68,7 +68,7 @@ Template.LiveVictimMap.onCreated(function() {
 
         google.maps.event.addListener(marker, 'click', function(marker) {
           console.log(this)
-          info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, document));
+          info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, {ctx: DistressSignal}));
           info_window.open(this.getMap(), this);
 
           $(".helpedBtn").click(function () {
