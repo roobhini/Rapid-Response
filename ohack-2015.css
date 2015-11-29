@@ -9,7 +9,8 @@
   height: 500px;
 }
 
-.map-app-container {	
-  width: 25em;
-  height: 25em;
+.map-app-container {
+  width: 250px;
+  height: 250px;
+  max-width: 100%;
 }
