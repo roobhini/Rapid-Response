@@ -4,10 +4,13 @@
       <h1>Distress Call</h1>
       <h4>by Rapid Response team</h4>
     </div>
-
     {{#if forceLoginActive}}
       {{#unless distressCallSent}}
-        {{> BigDistressUI}}
+        {{#if customLocationOptionSelected}}
+           {{> CustomLocationUI}}
+        {{else}}
+            {{> BigDistressUI}}
+        {{/if}}
       {{else}}
         {{> DistressResponseMessage}}
       {{/unless}}

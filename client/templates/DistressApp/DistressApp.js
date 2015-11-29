@@ -1,4 +1,16 @@
 Template.DistressApp.helpers({
+  'distressCallMainView'() {
+    return Session.get("distressCallView") === true;
+  },
+});
+
+Template.DistressApp.helpers({
+  'customLocationOptionSelected'() {
+    return Session.get("customLocationOptionSelected") === true;
+  },
+});
+
+Template.DistressApp.helpers({
   'distressCallSent'() {
     return Session.get("distressCallSent") === true;
   },
@@ -16,3 +28,12 @@ Tracker.autorun(function (computation) {
     computation.stop();
   }
 });
+
+Template.DistressApp.onRendered(() => {
+  console.log("hello there!");
+});
+
+
+Meteor.startup(() => {
+  GoogleMaps.load();
+})
