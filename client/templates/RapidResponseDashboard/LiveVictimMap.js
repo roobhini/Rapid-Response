@@ -19,7 +19,8 @@ Template.LiveVictimMap.helpers({
         zoom: 8
       };
     }
-  }
+  },
+  victimsAwaitingHelpCount: () => {return DistressSignals.find({"helped": false}).count()}
 });
 
 Template.LiveVictimMap.onCreated(function() {

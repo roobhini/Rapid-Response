@@ -1,10 +1,15 @@
 Template.BigDistressUI.events({
   'click #trigger-button'(ev) {
     ev.preventDefault();
+
     Meteor.call('addDistressSignal', {
       "coords": Session.get('distressCallCoords'),
-      "helped": false
+      "helped": false,
+      "report": $('#distress-report').val(),
+      "phone": Session.get("mobileNumber"),
+      "fullName": Session.get("fullName")
     });
+
     Session.set("distressCallSent", true);
   }
 })
@@ -20,4 +25,3 @@ Template.BigDistressUI.events({
     Session.set("customLocationOptionSelected", true);
   }
 })
-
