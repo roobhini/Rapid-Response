@@ -22,14 +22,14 @@ Template.LiveVictimMap.helpers({
   }
 });
 
-var content = '<button type=submit name="CompleteButton">Mark as Completed</button>';
+var content = `<button type=submit name="CompleteButton">Mark 'Helped'</button>`;
 
 Template.LiveVictimMap.onCreated(function() {
   GoogleMaps.ready('liveVictimMap', function(map) {
     var info_window = new google.maps.InfoWindow({content: content});
     var markers = {};
 
-    DistressSignals.find({"doneflag": "false"}).observe({
+    DistressSignals.find({"helped": false}).observe({
       added: function(document) {
         // Create a marker for this document
         var marker = new google.maps.Marker({
@@ -38,8 +38,6 @@ Template.LiveVictimMap.onCreated(function() {
           position: new google.maps.LatLng(document.latitudes, document.Longitudes),
           map: map.instance,
           clickable:true,
-          // We store the document _id on the marker in order
-          // to update the document within the 'dragend' event below.
           id: document._id
         });
 
@@ -50,20 +48,12 @@ Template.LiveVictimMap.onCreated(function() {
           //info_window.content = this.note;
           info_window.open(this.getMap(), this);
           $("button").click(function () {
-            Livelocation.update(db_id, { $set: {doneflag:"true"}});
+            DistressSignals.update(db_id, { $set: {helped: true}});
           });
         });
 
-        // This listener lets us drag markers on the map and update their corresponding document.
-        google.maps.event.addListener(marker, 'dragend', function(event) {
-          Livelocation.update(marker.id, { $set: { latitudes: event.latLng.latitudes(), Longitudes: event.latLng.Longitudes() }});
-        });
-
         // Store this marker instance within the markers object.
-        markers[document._id] = marker;
-      },
-      changed: function(newDocument, oldDocument) {
-        markers[newDocument._id].setPosition({ latitudes: newDocument.latitudes, Longitudes: newDocument.Longitudes });
+        markers[marker.id] = marker;
       },
       removed: function(oldDocument) {
         // Remove the marker from the map
@@ -79,22 +69,3 @@ Template.LiveVictimMap.onCreated(function() {
     });
   });
 });
-
- /*Template.body.events({
-    'click #CompleteButton': function (e) {
-      alert("You pressed the button");
-    }
-  });
-
-Template.LiveVictimMap.events({
-  'click #CompleteButton'(ev) {
-    ev.preventDefault();
-
-    // if (Geolocation.error()) {
-    alert(marker.id);
-    Livelocation.update(marker.id, { $set: {doneflag:"true"}});
-    // }
-
-   // Session.set("distressCallSent", true);
-  }
-})*/
