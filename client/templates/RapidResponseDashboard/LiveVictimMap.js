@@ -24,35 +24,38 @@ Template.LiveVictimMap.helpers({
 
 Template.LiveVictimMap.onCreated(function() {
   GoogleMaps.ready('liveVictimMap', function(map) {
-    var info_window = new google.maps.InfoWindow({content: ""});
-    var markers = {};
+    let DistressSignalBubbleHandler = function (DistressSignal, markers) {
+      // Create a marker for this document
+      var marker = new google.maps.Marker({
+        draggable: false,
+        animation: google.maps.Animation.DROP,
+        position: new google.maps.LatLng(document.latitudes, document.Longitudes),
+        map: map.instance,
+        clickable:true,
+        id: DistressSignal._id
+      });
 
-    DistressSignals.find({"helped": false}).observe({
-      added: function(document) {
-        // Create a marker for this document
-        var marker = new google.maps.Marker({
-          draggable: false,
-          animation: google.maps.Animation.DROP,
-          position: new google.maps.LatLng(document.latitudes, document.Longitudes),
-          map: map.instance,
-          clickable:true,
-          id: document._id
+      google.maps.event.addListener(marker, 'click', function(marker) {
+        info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, document));
+        info_window.open(this.getMap(), this);
+
+        $(".helpedBtn").click(function () {
+          DistressSignals.update(marker.id, {'$set': {'helped': true}});
         });
+      });
 
-        google.maps.event.addListener(marker, 'click', function(marker) {
-          var db_id = this.id;
+      // Store this marker instance within the markers object.
+      markers[marker.id] = marker;
+    };
 
-          info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, document));
-          info_window.open(this.getMap(), this);
+    var info_window = new google.maps.InfoWindow({content: ""}),
+        markers = {},
+        DistressQuery = DistressSignals.find({"helped": false});
 
-          $(".helpedBtn").click(function () {
-            DistressSignals.update(db_id, { $set: {helped: true}});
-          });
-        });
+    DistressQuery.fetch().forEach((DistressSignal) => {DistressSignalBubbleHandler(DistressSignal, markers)});
 
-        // Store this marker instance within the markers object.
-        markers[marker.id] = marker;
-      },
+    DistressQuery.observe({
+      added: (observedDoc) => {DistressSignalBubbleHandler(observedDoc)},
       removed: function(oldDocument) {
         // Remove the marker from the map
         markers[oldDocument._id].setMap(null);
