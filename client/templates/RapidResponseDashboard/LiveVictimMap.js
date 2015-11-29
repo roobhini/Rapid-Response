@@ -22,11 +22,9 @@ Template.LiveVictimMap.helpers({
   }
 });
 
-var content = `<button type=submit name="CompleteButton">Mark 'Helped'</button>`;
-
 Template.LiveVictimMap.onCreated(function() {
   GoogleMaps.ready('liveVictimMap', function(map) {
-    var info_window = new google.maps.InfoWindow({content: content});
+    var info_window = new google.maps.InfoWindow({content: ""});
     var markers = {};
 
     DistressSignals.find({"helped": false}).observe({
@@ -44,10 +42,10 @@ Template.LiveVictimMap.onCreated(function() {
         google.maps.event.addListener(marker, 'click', function(marker) {
           var db_id = this.id;
 
-          info_window.setContent(content);
-          //info_window.content = this.note;
+          info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, document));
           info_window.open(this.getMap(), this);
-          $("button").click(function () {
+
+          $(".helpedBtn").click(function () {
             DistressSignals.update(db_id, { $set: {helped: true}});
           });
         });
