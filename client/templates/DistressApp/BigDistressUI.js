@@ -7,7 +7,8 @@ Template.BigDistressUI.events({
       "helped": false,
       "report": $('#distress-report').val(),
       "phone": Session.get("mobileNumber"),
-      "fullName": Session.get("fullName")
+      "fullName": Session.get("fullName"),
+      "source": "Mobile"
     });
 
     Session.set("distressCallSent", true);

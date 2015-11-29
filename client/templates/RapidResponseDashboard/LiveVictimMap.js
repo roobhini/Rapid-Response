@@ -25,12 +25,29 @@ Template.LiveVictimMap.helpers({
 
 Template.LiveVictimMap.onCreated(function() {
   GoogleMaps.ready('liveVictimMap', function(map) {
+    event.preventDefault();
     var info_window = new google.maps.InfoWindow({content: ""}),
         markers = {},
         DistressQuery = DistressSignals.find({"helped": false});
 
     DistressQuery.fetch().forEach((DistressSignal) => {
+            
       // Create a marker for this document
+      if(DistressSignal.source == "twitter"){
+       
+      var marker = new google.maps.Marker({
+        draggable: false,
+        animation: google.maps.Animation.DROP,
+        position: new google.maps.LatLng(DistressSignal.coords.lat, DistressSignal.coords.lng),
+        map: map.instance,
+        clickable: true,
+        icon:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        id: DistressSignal._id
+      });
+
+      }
+      else{
+        
       var marker = new google.maps.Marker({
         draggable: false,
         animation: google.maps.Animation.DROP,
@@ -39,6 +56,7 @@ Template.LiveVictimMap.onCreated(function() {
         clickable: true,
         id: DistressSignal._id
       });
+    }
 
       google.maps.event.addListener(marker, 'click', function(marker) {
         console.log(this)
@@ -56,7 +74,20 @@ Template.LiveVictimMap.onCreated(function() {
 
     DistressQuery.observe({
       added: (DistressSignal) => {
+
         // Create a marker for this document
+        if(DistressSignal.source == "twitter"){
+        var marker = new google.maps.Marker({
+          draggable: false,
+          animation: google.maps.Animation.DROP,
+          position: new google.maps.LatLng(DistressSignal.coords.lat, DistressSignal.coords.lng),
+          map: map.instance,
+          clickable: true,
+          icon:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          id: DistressSignal._id
+        });
+      }
+      else{
         var marker = new google.maps.Marker({
           draggable: false,
           animation: google.maps.Animation.DROP,
@@ -66,6 +97,7 @@ Template.LiveVictimMap.onCreated(function() {
           id: DistressSignal._id
         });
 
+      }
         google.maps.event.addListener(marker, 'click', function(marker) {
           console.log(this)
           info_window.setContent(Blaze.toHTMLWithData(Template.DistressMapBubble, {ctx: DistressSignal}));
@@ -91,5 +123,9 @@ Template.LiveVictimMap.onCreated(function() {
         delete markers[observedDoc._id];
       }
     });
+
+
+
+
   });
 });
